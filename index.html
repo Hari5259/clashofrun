@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clash of Runs 3D - Hand Cricket Championship</title>
+  <!-- Google Fonts for Premium Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="style.css">
+  <!-- Three.js and OrbitControls via CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+  <!-- WebGL Canvas -->
+  <canvas id="gameCanvas"></canvas>
+
+  <!-- Sound Toggle Button -->
+  <button id="soundToggle" class="sound-btn" aria-label="Toggle Sound">
+    <svg id="soundOnIcon" viewBox="0 0 24 24" width="24" height="24">
+      <path fill="currentColor" d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zm-2 0L7 7H3v10h4l5 3.77V3.23zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
+    </svg>
+    <svg id="soundOffIcon" viewBox="0 0 24 24" width="24" height="24" class="hidden">
+      <path fill="currentColor" d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.21.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+    </svg>
+  </button>
+
+  <!-- UI Screens Container -->
+  <div id="uiOverlay" class="ui-overlay">
+    
+    <!-- SCREEN 1: START SCREEN -->
+    <div id="startScreen" class="screen active">
+      <div class="brand-container">
+        <h1 class="logo-text">CLASH OF RUNS <span class="badge-3d">3D</span></h1>
+        <p class="subtitle">The Ultimate 3D Offline Hand Cricket Championship</p>
+      </div>
+      
+      <div class="glass-card config-panel">
+        <h2>GAME SETTINGS</h2>
+        
+        <div class="config-group">
+          <label>MATCH LENGTH</label>
+          <div class="button-toggle-group" id="oversSelector">
+            <button class="toggle-btn active" data-value="1">1 Over</button>
+            <button class="toggle-btn" data-value="2">2 Overs</button>
+            <button class="toggle-btn" data-value="5">5 Overs</button>
+          </div>
+        </div>
+        
+        <div class="config-group">
+          <label>MAX WICKETS</label>
+          <div class="button-toggle-group" id="wicketsSelector">
+            <button class="toggle-btn active" data-value="1">1 Wicket</button>
+            <button class="toggle-btn" data-value="3">3 Wickets</button>
+            <button class="toggle-btn" data-value="5">5 Wickets</button>
+          </div>
+        </div>
+        
+        <div class="config-group">
+          <label>DIFFICULTY</label>
+          <div class="button-toggle-group" id="difficultySelector">
+            <button class="toggle-btn" data-value="easy">ROOKIE</button>
+            <button class="toggle-btn active" data-value="medium">PRO</button>
+            <button class="toggle-btn" data-value="hard">LEGEND</button>
+          </div>
+        </div>
+
+        <button id="startGameBtn" class="primary-btn glow-effect">ENTER STADIUM</button>
+      </div>
+
+      <div class="instructions-panel glass-card">
+        <h3>HOW TO PLAY</h3>
+        <ul>
+          <li><strong>Batting:</strong> Tap numbers 1 to 6 to score runs. If the computer bowls the same number, you are <strong>OUT</strong>. Otherwise, you score those runs!</li>
+          <li><strong>Bowling:</strong> Choose a number 1 to 6. If you match the computer batsman's choice, they are <strong>OUT</strong>.</li>
+          <li><strong>Controls:</strong> Right-click and drag to rotate the 3D stadium, scroll to zoom, and watch the ball flight & hand gestures in real-time!</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SCREEN 2: TOSS SCREEN -->
+    <div id="tossScreen" class="screen">
+      <div class="glass-card toss-card">
+        <h2>THE TOSS</h2>
+        <p class="toss-instruction">Select Heads or Tails, then spin the coin!</p>
+        
+        <div class="toss-choice-container">
+          <button class="toss-choice-btn active" id="tossHeadsBtn" data-value="heads">
+            <span class="coin-face">H</span> HEADS
+          </button>
+          <button class="toss-choice-btn" id="tossTailsBtn" data-value="tails">
+            <span class="coin-face">T</span> TAILS
+          </button>
+        </div>
+
+        <button id="flipCoinBtn" class="primary-btn">FLIP COIN</button>
+
+        <div id="tossAnimationContainer" class="coin-anim-container hidden">
+          <!-- Text feedback or placeholder for 3D coin spin -->
+          <div class="spinning-loader"></div>
+          <p id="tossSpinningText">Flipping coin in 3D...</p>
+        </div>
+
+        <div id="tossResultContainer" class="toss-result-container hidden">
+          <h3 id="tossResultHeader"></h3>
+          <p id="tossResultText"></p>
+          <div class="toss-decision-buttons hidden" id="tossDecisionContainer">
+            <button class="primary-btn decision-btn" id="chooseBatBtn">BAT FIRST</button>
+            <button class="primary-btn decision-btn" id="chooseBowlBtn">BOWL FIRST</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 3: GAMEPLAY HUD -->
+    <div id="gameplayHud" class="screen hud-screen">
+      <!-- Top Scoreboard Bar -->
+      <div class="scoreboard-bar glass-card">
+        <div class="scoreboard-main">
+          <div class="team-innings">
+            <span class="badge-role" id="currentRoleBadge">BATTING</span>
+            <h3 id="battingTeamName">PLAYER</h3>
+          </div>
+          <div class="score-display">
+            <span class="runs" id="hudScore">0</span>
+            <span class="divider">/</span>
+            <span class="wickets" id="hudWickets">0</span>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-box">
+            <span class="stat-label">OVERS</span>
+            <span class="stat-value" id="hudOvers">0.0 / 1</span>
+          </div>
+          <div class="stat-box" id="targetBox" style="visibility: hidden;">
+            <span class="stat-label">TARGET</span>
+            <span class="stat-value" id="hudTarget">0</span>
+          </div>
+          <div class="stat-box" id="chaseInfoBox" style="display: none;">
+            <span class="stat-label">NEED</span>
+            <span class="stat-value" id="hudChaseMessage">0 runs off 6 balls</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Indicator Text Overlay -->
+      <div class="action-alert" id="actionAlert">
+        <h2 id="actionAlertText">READY PLAYER ONE</h2>
+      </div>
+
+      <!-- Gestures Display (Visual indicators side-by-side with 3D canvas overlay) -->
+      <div class="gestures-overlay">
+        <div class="gesture-card player-gesture">
+          <div class="gesture-title">PLAYER</div>
+          <div class="gesture-value" id="playerHandVal">-</div>
+          <div class="gesture-role" id="playerRoleVal">BAT</div>
+        </div>
+        <div class="gesture-card computer-gesture">
+          <div class="gesture-title">COMPUTER</div>
+          <div class="gesture-value" id="computerHandVal">-</div>
+          <div class="gesture-role" id="computerRoleVal">BOWL</div>
+        </div>
+      </div>
+
+      <!-- Game Controller (Numbers 1 to 6) -->
+      <div class="control-panel glass-card">
+        <div class="panel-header">
+          <span id="promptActionText">CHOOSE YOUR NUMBER</span>
+        </div>
+        <div class="input-grid">
+          <button class="run-btn" data-value="1">1</button>
+          <button class="run-btn" data-value="2">2</button>
+          <button class="run-btn" data-value="3">3</button>
+          <button class="run-btn" data-value="4">4</button>
+          <button class="run-btn" data-value="5">5</button>
+          <button class="run-btn" data-value="6">6</button>
+        </div>
+      </div>
+
+      <!-- Event/Commentary Log -->
+      <div class="commentary-panel glass-card" id="commentaryPanel">
+        <div class="commentary-header">COMMENTARY</div>
+        <div class="commentary-list" id="commentaryList">
+          <div class="commentary-item highlight">Welcome to the Clash of Runs Stadium!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 4: INNINGS BREAK SCREEN -->
+    <div id="inningsBreakScreen" class="screen">
+      <div class="glass-card break-card">
+        <h2 class="gold-text">INNINGS COMPLETED</h2>
+        <div class="break-stats">
+          <div class="team-stat">
+            <h3 id="breakInningsTitle">1st Innings</h3>
+            <div class="big-score" id="breakInningsScore">0/0</div>
+            <p id="breakInningsSummary">Overs: 0.0</p>
+          </div>
+          <div class="target-card">
+            <h4>TARGET</h4>
+            <div class="target-value" id="breakTargetValue">1</div>
+            <p id="breakChaseRequirements">Computer needs 1 run in 6 balls</p>
+          </div>
+        </div>
+        
+        <button id="startSecondInningsBtn" class="primary-btn glow-effect">START SECOND INNINGS</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 5: GAME OVER SCREEN -->
+    <div id="gameOverScreen" class="screen">
+      <div class="glass-card gameover-card">
+        <h1 id="gameOverResultHeader" class="glow-text">MATCH FINISHED</h1>
+        <p id="gameOverResultSub" class="subtitle">A thrilling game of hand cricket comes to an end.</p>
+        
+        <div class="scoreboard-summary glass-card">
+          <h3>MATCH SUMMARY</h3>
+          <div class="summary-grid">
+            <div class="summary-col">
+              <h4>PLAYER</h4>
+              <div class="summary-score" id="summaryPlayerScore">0/0</div>
+              <div class="summary-details" id="summaryPlayerDetails">Overs: 1.0</div>
+            </div>
+            <div class="summary-col vs-divider">
+              <span>VS</span>
+            </div>
+            <div class="summary-col">
+              <h4>COMPUTER</h4>
+              <div class="summary-score" id="summaryComputerScore">0/0</div>
+              <div class="summary-details" id="summaryComputerDetails">Overs: 1.0</div>
+            </div>
+          </div>
+        </div>
+
+        <button id="restartGameBtn" class="primary-btn glow-effect">PLAY AGAIN</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- JavaScript Entrypoint -->
+  <script src="game.js"></script>
+</body>
+</html>
