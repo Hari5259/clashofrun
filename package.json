@@ -1,0 +1,12 @@
+{
+  "name": "clash-of-runs",
+  "version": "1.0.0",
+  "description": "Static 3D hand cricket game",
+  "scripts": {
+    "dev": "npx http-server -c-1 -p 8000",
+    "start": "npx http-server -c-1 -p 8000"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {}
+}
