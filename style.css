@@ -407,6 +407,14 @@ h1, h2, h3, h4 {
   pointer-events: none; /* Make click go through to OrbitControls except cards */
 }
 
+/* Stadium background */
+.hud-screen {
+  background-image: url('assets/epic_modern_showdown_1780658722860.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
 /* Scoreboard Top Bar */
 .scoreboard-bar {
   width: 100%;
