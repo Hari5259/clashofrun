@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Static 3D hand cricket game",
   "scripts": {
-    "dev": "npx http-server -c-1 -p 8080",
-    "start": "npx http-server -c-1 -p 8080"
+    "dev": "npx http-server -c-1 -p 8082",
+    "start": "npx http-server -c-1 -p 8082"
   },
   "author": "",
   "license": "MIT",

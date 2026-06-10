@@ -189,7 +189,7 @@ let stadiumGroup, pitch, creaseFront, creaseBack, boundaryLine;
 let wicketsFront = [], wicketsBack = []; // references to stumps & bails
 let ballMesh;
 let playerHand, computerHand; // Hand structures
-let 3dCoin;
+let coinMesh3D;
 
 // Ball Trajectory animation variables
 let ballAnimTimer = 0;
@@ -290,11 +290,11 @@ function initGraphics() {
   // Create Coin
   const coinGeom = new THREE.CylinderGeometry(0.5, 0.5, 0.06, 24);
   const coinMat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.9, roughness: 0.1 });
-  3dCoin = new THREE.Mesh(coinGeom, coinMat);
-  3dCoin.position.set(0, 0.05, -2);
-  3dCoin.rotation.x = Math.PI / 2;
-  3dCoin.visible = false;
-  scene.add(3dCoin);
+  coinMesh3D = new THREE.Mesh(coinGeom, coinMat);
+  coinMesh3D.position.set(0, 0.05, -2);
+  coinMesh3D.rotation.x = Math.PI / 2;
+  coinMesh3D.visible = false;
+  scene.add(coinMesh3D);
 
   // Set rest gestures
   setHandGesture(playerHand, 0);
@@ -994,11 +994,11 @@ function startCoinTossFlow() {
   switchScreen('tossScreen');
   
   // Show 3D coin, position camera closer
-  3dCoin.visible = true;
-  3dCoin.position.set(0, 0.5, -2);
+  coinMesh3D.visible = true;
+  coinMesh3D.position.set(0, 0.5, -2);
   
   camera.position.set(0, 3, -6);
-  controls.target.copy(3dCoin.position);
+  controls.target.copy(coinMesh3D.position);
 }
 
 function handleFlipCoin() {
@@ -1023,11 +1023,11 @@ function handleFlipCoin() {
     document.getElementById('tossResultContainer').classList.remove('hidden');
 
     // Land position
-    3dCoin.position.y = 0.055;
+    coinMesh3D.position.y = 0.055;
     if (coinLanding === 'heads') {
-      3dCoin.rotation.x = Math.PI / 2; // Flat show H
+      coinMesh3D.rotation.x = Math.PI / 2; // Flat show H
     } else {
-      3dCoin.rotation.x = -Math.PI / 2; // Flat show T
+      coinMesh3D.rotation.x = -Math.PI / 2; // Flat show T
     }
 
     const resultHeader = document.getElementById('tossResultHeader');
@@ -1069,7 +1069,7 @@ function handleFlipCoin() {
 
 function startMatchPlay() {
   gameState = 'PLAYING';
-  3dCoin.visible = false;
+  coinMesh3D.visible = false;
   switchScreen('gameplayHud');
 
   // Reset stats
@@ -1111,10 +1111,10 @@ function animate() {
   if (isCoinFlipping) {
     coinFlipTimer += delta;
     // Rapid spin
-    3dCoin.rotation.x += 15 * delta;
-    3dCoin.rotation.y += 8 * delta;
+    coinMesh3D.rotation.x += 15 * delta;
+    coinMesh3D.rotation.y += 8 * delta;
     // Go up and down
-    3dCoin.position.y = 0.5 + Math.sin((coinFlipTimer / 1.8) * Math.PI) * 3;
+    coinMesh3D.position.y = 0.5 + Math.sin((coinFlipTimer / 1.8) * Math.PI) * 3;
   }
 
   // 4. Ball Flight Path Physics
